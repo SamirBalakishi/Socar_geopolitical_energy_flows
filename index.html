@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geopolitical Energy Flows: Strategic Pipelines and Tanker Routes</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Source Sans 3',sans-serif; background:#f5f5f0; }
+  .page-wrap { max-width:1200px; margin:0 auto; background:#fff; border:1px solid #d4d4d0; overflow:hidden; }
+  .title-bar { background:#2c2c2c; color:#fff; padding:14px 24px; text-align:center; }
+  .title-bar h1 { font-size:17px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin:0; }
+  #map { width:100%; height:640px; }
+  .legend-panel {
+    position:absolute; bottom:30px; left:12px; z-index:1000;
+    background:rgba(255,255,252,0.94); border:1px solid #c0c0b8;
+    border-radius:4px; padding:14px 18px;
+    font-family:'Source Sans 3',sans-serif;
+    box-shadow:0 1px 5px rgba(0,0,0,0.12); max-width:280px;
+  }
+  .legend-panel h3 { font-size:11.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#222; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #ddd; }
+  .legend-row { display:flex; align-items:center; gap:10px; margin-bottom:7px; cursor:pointer; transition:opacity 0.2s; }
+  .legend-row.dimmed { opacity:0.3; }
+  .legend-row:hover { opacity:0.7; }
+  .legend-line { width:32px; height:0; flex-shrink:0; }
+  .legend-label { font-size:11.5px; color:#333; font-weight:600; line-height:1.3; }
+  .legend-sub { font-size:10px; color:#888; font-weight:400; }
+  .legend-divider { height:1px; background:#ddd; margin:8px 0; }
+  .legend-note { font-size:9.5px; color:#999; font-style:italic; margin-top:6px; }
+  .city-primary { background:transparent !important; border:none !important; box-shadow:none !important; font-family:'Source Sans 3',sans-serif; font-size:12px; font-weight:700; color:#1a1a1a; white-space:nowrap; padding:0 !important; text-shadow:1px 1px 2px rgba(255,255,255,0.9),-1px -1px 2px rgba(255,255,255,0.9); }
+  .city-secondary { background:transparent !important; border:none !important; box-shadow:none !important; font-family:'Source Sans 3',sans-serif; font-size:10.5px; font-weight:600; color:#444; white-space:nowrap; padding:0 !important; text-shadow:1px 1px 2px rgba(255,255,255,0.9),-1px -1px 2px rgba(255,255,255,0.9); }
+  .source-bar { padding:8px 24px; font-size:10px; color:#999; border-top:1px solid #e8e8e4; background:#fafaf8; text-align:center; }
+  .leaflet-popup-content-wrapper { font-family:'Source Sans 3',sans-serif; border-radius:4px; }
+  .leaflet-popup-content { margin:10px 14px; font-size:12px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="title-bar">
+    <h1>Geopolitical Energy Flows: Strategic Pipelines and Tanker Routes</h1>
+  </div>
+  <div style="position:relative;">
+    <div id="map"></div>
+    <div class="legend-panel">
+      <h3>Pipeline Infrastructure</h3>
+      <div class="legend-row" data-key="btc"><div class="legend-line" style="border-top:3.5px solid #c02020;"></div><div><span class="legend-label">BTC</span> <span class="legend-sub">Oil &middot; 1,099 mi</span></div></div>
+      <div class="legend-row" data-key="scp"><div class="legend-line" style="border-top:3px solid #1a60b0;"></div><div><span class="legend-label">SCP / BTE</span> <span class="legend-sub">Gas &middot; 430 mi</span></div></div>
+      <div class="legend-row" data-key="tanap"><div class="legend-line" style="border-top:3px solid #1a7a3a;"></div><div><span class="legend-label">TANAP</span> <span class="legend-sub">Gas &middot; 1,150 mi</span></div></div>
+      <div class="legend-row" data-key="tap"><div class="legend-line" style="border-top:2.5px dashed #6a2a90;"></div><div><span class="legend-label">TAP</span> <span class="legend-sub">Gas &middot; 546 mi</span></div></div>
+      <div class="legend-row" data-key="wrep"><div class="legend-line" style="border-top:2.5px solid #8b5e3c;"></div><div><span class="legend-label">Baku&#x2013;Supsa</span> <span class="legend-sub">WREP &middot; Oil &middot; 518 mi</span></div></div>
+      <div class="legend-row" data-key="novo"><div class="legend-line" style="border-top:3px dashed #d06a20;"></div><div><span class="legend-label">Baku&#x2013;Novorossiysk</span> <span class="legend-sub">Oil &middot; 827 mi</span></div></div>
+      <div class="legend-divider"></div>
+      <div class="legend-row" data-key="tanker"><div class="legend-line" style="border-top:2px dotted #0080a0;"></div><div><span class="legend-label">Tanker route to Israel</span> <span class="legend-sub">Ceyhan &#x2192; Ashkelon</span></div></div>
+      <div class="legend-row" data-key="msc"><div class="legend-line" style="border-top:2.5px dotted #e08020;"></div><div><span class="legend-label">MSC container service</span> <span class="legend-sub">Aegean &#x2192; Israel</span></div></div>
+      <div class="legend-divider"></div>
+      <div class="legend-row" style="cursor:default;"><div style="width:14px;height:14px;background:#d11d6b;border:2px solid #fff;box-shadow:0 0 3px rgba(0,0,0,0.3);transform:rotate(45deg);margin-left:9px;flex-shrink:0;"></div><div style="margin-left:10px;"><span class="legend-label">SOCAR Terminal</span> <span class="legend-sub">asset under decision</span></div></div>
+      <div class="legend-note">Click legend items to toggle. Click terminals for details.</div>
+    </div>
+  </div>
+  <div class="source-bar">Routes are approximate and simplified for illustrative purposes. Sources: BP, SOCAR, TANAP, TAP AG. &copy; OpenStreetMap contributors &amp; CARTO.</div>
+</div>
+<script>
+var map = L.map('map', { center:[38.5,38], zoom:5, minZoom:4, maxZoom:8, zoomControl:true, attributionControl:false });
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {maxZoom:18}).addTo(map);
+
+var btcCoords=[[40.19,49.94],[40.22,49.70],[40.26,49.40],[40.32,49.10],[40.38,48.85],[40.45,48.55],[40.52,48.25],[40.58,47.90],[40.63,47.55],[40.68,47.30],[40.73,47.10],[40.77,46.80],[40.80,46.55],[40.85,46.30],[40.90,46.05],[40.97,45.80],[41.05,45.55],[41.10,45.40],[41.15,45.25],[41.25,45.05],[41.35,44.90],[41.45,44.70],[41.55,44.50],[41.62,44.42],[41.69,44.38],[41.67,44.10],[41.65,43.85],[41.63,43.60],[41.60,43.35],[41.55,43.15],[41.48,42.95],[41.40,42.80],[41.32,42.65],[41.25,42.55],[41.18,42.45],[40.95,42.30],[40.75,42.15],[40.50,41.85],[40.30,41.65],[40.15,41.48],[39.90,41.27],[39.72,40.45],[39.62,39.65],[39.75,36.95],[39.30,36.55],[38.65,36.15],[37.90,36.00],[36.88,35.80]];
+var scpCoords=[[40.17,49.97],[40.20,49.73],[40.24,49.43],[40.30,49.13],[40.36,48.88],[40.43,48.58],[40.50,48.28],[40.56,47.93],[40.61,47.58],[40.66,47.33],[40.71,47.13],[40.75,46.83],[40.78,46.58],[40.83,46.33],[40.88,46.08],[40.95,45.83],[41.03,45.58],[41.08,45.43],[41.13,45.28],[41.23,45.08],[41.33,44.93],[41.43,44.73],[41.53,44.53],[41.60,44.45],[41.67,44.41],[41.65,44.13],[41.63,43.88],[41.61,43.63],[41.58,43.38],[41.53,43.18],[41.46,42.98],[41.38,42.83],[41.30,42.68],[41.23,42.58],[41.16,42.48],[40.93,42.33],[40.73,42.18],[40.48,41.88],[40.28,41.68],[40.13,41.51],[39.88,41.30]];
+var tanapCoords=[[41.16,42.48],[40.73,42.18],[40.13,41.51],[39.88,41.30],[39.92,40.85],[39.88,40.25],[39.72,39.65],[39.78,38.55],[39.75,36.95],[39.78,35.75],[39.70,34.05],[39.80,33.45],[39.93,32.80],[39.78,31.45],[39.98,30.25],[40.08,29.55],[40.18,28.75],[40.23,27.75],[40.33,26.75],[40.88,26.55],[41.08,26.38]];
+var tapCoords=[[41.08,26.38],[41.03,25.75],[40.88,24.75],[40.68,23.65],[40.48,22.45],[40.33,21.45],[40.53,20.95],[40.58,20.65],[40.48,20.15],[40.58,19.55],[40.28,18.95],[40.18,18.55],[40.18,18.35]];
+var wrepCoords=[[40.21,49.91],[40.24,49.67],[40.28,49.37],[40.34,49.07],[40.40,48.82],[40.47,48.52],[40.54,48.22],[40.60,47.87],[40.65,47.52],[40.70,47.27],[40.75,47.07],[40.79,46.77],[40.82,46.52],[40.87,46.27],[40.92,46.02],[40.99,45.77],[41.07,45.52],[41.12,45.37],[41.17,45.22],[41.27,45.02],[41.37,44.87],[41.47,44.67],[41.57,44.47],[41.64,44.39],[41.71,44.35],[41.73,44.08],[41.75,43.80],[41.78,43.50],[41.82,43.20],[41.86,42.90],[41.90,42.60],[41.95,42.40],[42.00,42.20],[42.03,42.00],[42.05,41.80],[42.08,41.55],[42.00,41.72]];
+var novoCoords=[[40.19,49.94],[40.40,49.80],[40.70,49.70],[41.00,49.50],[41.30,49.20],[41.60,48.80],[41.90,48.50],[42.10,48.20],[42.30,47.80],[42.50,47.50],[42.70,47.10],[42.90,46.60],[43.10,46.00],[43.25,45.40],[43.40,44.80],[43.55,44.20],[43.70,43.50],[43.80,42.80],[43.90,42.10],[44.00,41.40],[44.10,40.70],[44.20,40.00],[44.35,39.30],[44.50,38.60],[44.65,37.80]];
+var tankerCoords=[[36.88,35.80],[36.50,35.50],[36.00,35.20],[35.50,35.00],[35.00,34.80],[34.50,34.60],[34.00,34.55],[33.50,34.50],[33.00,34.45],[32.50,34.40],[32.20,34.42],[31.80,34.48],[31.67,34.55]];
+var mscCoords=[[38.80,26.97],[38.40,26.60],[37.90,27.00],[37.20,27.60],[36.60,28.40],[36.20,29.50],[35.80,30.80],[35.30,32.00],[34.70,33.20],[34.00,33.90],[33.20,34.30],[32.40,34.50],[31.90,34.55],[31.67,34.55]];
+
+var layers={};
+L.polyline(btcCoords,{color:'#c02020',weight:8,opacity:0.12,smoothFactor:1.5}).addTo(map);
+L.polyline(tanapCoords,{color:'#1a7a3a',weight:7,opacity:0.10,smoothFactor:1.5}).addTo(map);
+layers.novo=L.polyline(novoCoords,{color:'#d06a20',weight:3.5,opacity:0.8,smoothFactor:1.5,dashArray:'10,5'}).addTo(map);
+layers.wrep=L.polyline(wrepCoords,{color:'#8b5e3c',weight:3,opacity:0.85,smoothFactor:1.5}).addTo(map);
+layers.btc=L.polyline(btcCoords,{color:'#c02020',weight:4,opacity:0.9,smoothFactor:1.5}).addTo(map);
+layers.scp=L.polyline(scpCoords,{color:'#1a60b0',weight:3.5,opacity:0.85,smoothFactor:1.5}).addTo(map);
+layers.tanap=L.polyline(tanapCoords,{color:'#1a7a3a',weight:3.5,opacity:0.85,smoothFactor:1.5}).addTo(map);
+layers.tap=L.polyline(tapCoords,{color:'#6a2a90',weight:3,opacity:0.8,smoothFactor:1.5,dashArray:'8,5'}).addTo(map);
+layers.tanker=L.polyline(tankerCoords,{color:'#0080a0',weight:2.5,opacity:0.7,smoothFactor:1.5,dashArray:'4,6'}).addTo(map);
+layers.msc=L.polyline(mscCoords,{color:'#e08020',weight:2.5,opacity:0.75,smoothFactor:1.5,dashArray:'2,5'}).addTo(map);
+
+function dot(ll,color,size,popup){var m=L.circleMarker(ll,{radius:size||5,fillColor:color,color:'#fff',weight:1.5,fillOpacity:0.95,opacity:1}).addTo(map);if(popup)m.bindPopup(popup,{closeButton:false,offset:[0,-4]});return m;}
+function square(ll,color,size,popup){var s=size||14;var m=L.marker(ll,{icon:L.divIcon({className:'sq-marker',html:'<div style="width:'+s+'px;height:'+s+'px;background:'+color+';border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,0.4);transform:rotate(45deg);"></div>',iconSize:[s,s],iconAnchor:[s/2,s/2]})}).addTo(map);if(popup)m.bindPopup(popup,{closeButton:false,offset:[0,-6]});return m;}
+function lbl(ll,text,cls,dir,off){var m=L.marker(ll,{icon:L.divIcon({className:'x',html:'',iconSize:[0,0]})}).addTo(map);m.bindTooltip(text,{permanent:true,direction:dir||'right',offset:off||[8,0],className:cls||'city-primary'});return m;}
+
+dot([40.19,49.94],'#c02020',6,'<b>Sangachal Terminal</b><br>Near Baku. Origin of BTC, SCP, WREP, and Baku\u2013Novorossiysk pipelines.');
+lbl([40.19,49.94],'Baku','city-primary','right',[10,-2]);
+dot([41.69,44.38],'#444',5,'<b>Tbilisi</b><br>Capital of Georgia. BTC/SCP/WREP transit.');
+lbl([41.69,44.38],'Tbilisi','city-primary','right',[8,0]);
+dot([39.90,41.27],'#444',5,'<b>Erzurum</b><br>SCP/BTE terminus. TANAP junction. BTC transit.');
+lbl([39.90,41.27],'Erzurum','city-secondary','left',[-8,0]);
+dot([36.88,35.80],'#c02020',6,'<b>Ceyhan Marine Terminal</b><br>BTC terminus on the Mediterranean. Tanker loading for Israel and world markets.');
+lbl([36.88,35.80],'Ceyhan','city-primary','right',[8,0]);
+dot([42.00,41.72],'#8b5e3c',5,'<b>Supsa Terminal</b><br>WREP terminus. Black Sea coast of Georgia.');
+lbl([42.00,41.72],'Supsa','city-secondary','top',[0,-8]);
+dot([44.65,37.80],'#d06a20',5,'<b>Novorossiysk</b><br>Russian Black Sea port. Northern route terminus. Operated by Transneft.');
+lbl([44.65,37.80],'Novorossiysk','city-secondary','right',[8,0]);
+dot([31.67,34.55],'#0080a0',5,'<b>Ashkelon</b><br>Israeli Mediterranean port. Receives Azerbaijani crude via tanker from Ceyhan.');
+lbl([31.67,34.55],'Ashkelon','city-primary','right',[8,0]);
+dot([41.08,26.38],'#6a2a90',4,'<b>\u0130psala / Kipoi</b><br>TANAP\u2013TAP interconnection. T\u00FCrkiye\u2013Greece border.');
+lbl([41.08,26.38],'\u0130psala','city-secondary','top',[0,-8]);
+dot([39.78,31.45],'#1a7a3a',4,'<b>Eski\u015Fehir</b><br>TANAP off-take to Turkish national gas grid.');
+lbl([39.78,31.45],'Eski\u015Fehir','city-secondary','bottom',[0,8]);
+dot([39.93,32.85],'#555',4,'<b>Ankara</b><br>Capital of T\u00FCrkiye.');
+lbl([39.93,32.85],'Ankara','city-secondary','right',[8,0]);
+dot([40.18,18.35],'#6a2a90',4,'<b>Melendugno</b><br>TAP receiving terminal in southern Italy.');
+lbl([40.18,18.35],'Melendugno','city-secondary','left',[-8,0]);
+dot([39.75,36.95],'#555',3);
+lbl([39.75,36.95],'Sivas','city-secondary','bottom',[0,6]);
+dot([40.40,50.80],'#1a60b0',5,'<b>Shah Deniz Gas Field</b><br>Offshore gas field. Source for SCP/TANAP/TAP (Southern Gas Corridor).');
+lbl([40.40,50.80],'Shah Deniz','city-secondary','right',[8,0]);
+square([38.80,26.97],'#d11d6b',15,'<b>SOCAR Terminal &mdash; asset under decision</b><br>Alia\u011fa, \u0130zmir. Largest container terminal in T\u00fcrkiye\u2019s Aegean region (541,100 TEU, 2024). Site of STAR Refinery and Petkim complex. MSC\u2019s Terminal Investment Limited (TIL) would take a 50% stake.');
+lbl([38.80,26.97],'SOCAR Terminal','city-primary','left',[-12,0]);
+
+document.querySelectorAll('.legend-row').forEach(function(row){row.addEventListener('click',function(){var k=row.dataset.key,l=layers[k];if(!l)return;if(map.hasLayer(l)){map.removeLayer(l);row.classList.add('dimmed');}else{map.addLayer(l);row.classList.remove('dimmed');}});});
+</script>
+</body>
+</html>
